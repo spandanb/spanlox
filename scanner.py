@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import enum
 
 from typing import List, Any
@@ -47,16 +49,21 @@ KEYWORDS = {
 
 
 class Token:
-    def __init__(self, token_type: TokenType, text: str, literal: Any, line: int):
+    def __init__(self, token_type: TokenType, lexeme: str, literal: Any, line: int):
         self.token_type = token_type
-        self.text = text
+        self.lexeme = lexeme
         self.literal = literal
         self.line = line
+
+    @classmethod
+    def mk_token(cls, token_type: TokenType, text: str) -> Token:
+        """utility to easily create tokens"""
+        return cls(token_type, text, None, 1)
 
     def __str__(self) -> str:
         # when object is printed
         body = f'{self.token_type}'
-        tail = self.literal or self.text
+        tail = self.literal or self.lexeme
         if tail:
             body = f'{body}[{tail}]'
         return body
