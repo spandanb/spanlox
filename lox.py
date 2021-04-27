@@ -3,6 +3,7 @@ import sys
 from typing import List
 
 from scanner import Scanner
+from loxparser import Parser, AstPrinter
 from reporting import ErrorReporter
 
 # UTILS
@@ -27,6 +28,13 @@ def run(source: str):
     tokens = scanner.scan_tokens()
     for token in tokens:
         print(token)
+    parser = Parser(tokens, error_reporter)
+    expression = parser.parse()
+    if error_reporter.had_error:
+        # there was error; lazily exit
+        return
+
+    print(AstPrinter().print(expression))
 
 
 def run_prompt():

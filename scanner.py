@@ -148,7 +148,7 @@ class Scanner:
             self.advance()
 
         if self.is_at_end():
-            self.error_reporter.error(self.line, f'Unterminated string')
+            self.error_reporter.scan_error(self.line, f'Unterminated string')
 
         # the closing "
         self.advance()
@@ -249,7 +249,7 @@ class Scanner:
         elif char.isidentifier():
             self.tokenize_identifier()
         else:
-            self.error_reporter.error(self.line, f'Unexpected character [{char}]')
+            self.error_reporter.scan_error(self.line, f'Unexpected character [{char}]')
 
 
 if __name__ == '__main__':
