@@ -2,9 +2,11 @@ import sys
 
 from typing import List
 
-from scanner import Scanner
-from loxparser import Parser, AstPrinter
+from astprinter import AstPrinter
+from loxparser import Parser
 from reporting import ErrorReporter
+from scanner import Scanner
+
 
 # UTILS
 
