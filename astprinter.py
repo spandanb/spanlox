@@ -2,31 +2,13 @@ from typing import Any, List
 
 from expression import Binary, Expr, Grouping, Literal, Unary
 from loxtoken import Token, TokenType
-from visitor import Visitor, HandlerNotFoundException
-from utils import camel_to_snake
+from visitor import Visitor
 
 
 class AstPrinter(Visitor):
     """
     Visitor for printing AST
     """
-
-    def visit(self, expr: Expr) -> Any:
-        """
-        visit method; determines which specific
-        helper method to call
-        """
-        suffix = camel_to_snake(expr.__class__.__name__)
-        # determine the name of the handler method from class of expr
-        # NB: this requires the class and handler have the
-        # same name in PascalCase and snake_case, respectively
-        handler = f'visit_{suffix}'
-        if hasattr(self, handler):
-            return getattr(self, handler)(expr)
-        else:
-            print(f"AstPrinter does not have {handler}")
-            raise HandlerNotFoundException()
-
     def visit_binary(self, expr: Binary) -> str:
         return self.parenthesize(expr.operator.lexeme, expr.left, expr.right)
 

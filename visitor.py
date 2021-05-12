@@ -2,7 +2,8 @@
 Visitor abstract class
 """
 
-from abc import ABC, abstractmethod
+
+from utils import camel_to_snake
 
 
 class HandlerNotFoundException(Exception):
@@ -13,7 +14,7 @@ class HandlerNotFoundException(Exception):
     pass
 
 
-class Visitor(ABC):
+class Visitor:
     """
     Conceptually, Visitor is an interface/abstract class,
     where different concrete Visitors, e.g. AstPrinter can handle
@@ -26,12 +27,10 @@ class Visitor(ABC):
     See following for visitor design pattern in python:
      https://refactoring.guru/design-patterns/visitor/python/example
     """
-    pass
 
-    @abstractmethod
     def visit(self, expr: 'Expr'):
         """
-        this will determine which specific handler to invoke
+        this will determine which specific handler to invoke; dispatch
 
         NOTE: The tutorial defines separate methods for each
         expr type. But that's partly because of java, where reflection
@@ -40,4 +39,13 @@ class Visitor(ABC):
         More broadly, I'll use python dynamism, unless some substantial
         gain in readability or expressability is needed
         """
-        pass
+        suffix = camel_to_snake(expr.__class__.__name__)
+        # determine the name of the handler method from class of expr
+        # NB: this requires the class and handler have the
+        # same name in PascalCase and snake_case, respectively
+        handler = f'visit_{suffix}'
+        if hasattr(self, handler):
+            return getattr(self, handler)(expr)
+        else:
+            print(f"Visitor does not have {handler}")
+            raise HandlerNotFoundException()

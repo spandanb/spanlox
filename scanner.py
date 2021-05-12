@@ -4,6 +4,10 @@ from typing import List, Any
 
 from loxtoken import TokenType, Token, KEYWORDS
 
+"""
+NOTES: importing ErrorReporter, leads to circular dependency issue
+"""
+
 
 class Scanner:
     def __init__(self, source: str, error_reporter: 'ErrorReporter'):
