@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from typing import Any, List
 
-from expression import Binary, Expr, Grouping, Literal, Unary
+from expression import Binary, Expr, Expression, Grouping, Literal, Print, Stmt, Unary
 from loxtoken import TokenType, Token
 
 
@@ -17,6 +17,16 @@ class Parser:
     parser
 
     grammar used:
+    program        → declaration* EOF ;
+
+    declaration    → varDecl
+                   | statement ;
+    varDecl        → "var" IDENTIFIER ( "=" expression )? ";" ;
+
+    statement      → exprStmt
+                    | printStmt ;
+    exprStmt       → expression ";" ;
+    printStmt      → "print" expression ";" ;
     expression     → equality ;
     equality       → comparison ( ( "!=" | "==" ) comparison )* ;
     comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
@@ -26,11 +36,33 @@ class Parser:
                    | primary ;
     primary        → NUMBER | STRING | "true" | "false" | "nil"
                    | "(" expression ")" ;
+                   | IDENTIFIER ;
     """
     def __init__(self, tokens: List[Token], error_reporter: 'ErrorReporter'):
         self.tokens = tokens
         self.current = 0  # points to token to parse
         self.error_reporter = error_reporter
+
+    def declaration(self):
+        """
+        pass
+        """
+
+    def statement(self) -> Stmt:
+        if self.match(TokenType.PRINT):
+            return self.print_statement()
+
+        return self.expression_statement()
+
+    def print_statement(self):
+        value = self.expression()
+        self.consume(TokenType.SEMICOLON, "Expect ';' after value.")
+        return Print(value)
+
+    def expression_statement(self):
+        expr = self.expression()
+        self.consume(TokenType.SEMICOLON, "Expect ';' after value.")
+        return Expression(expr)
 
     def expression(self) -> Expr:
         """
@@ -182,12 +214,11 @@ class Parser:
                 return
             self.advance()
 
-    def parse(self):
+    def parse(self) -> List:
         """
         main entry point to parser
         """
-        try:
-            return self.expression()
-        except ParseError:
-            return None
-
+        statements = []
+        while self.is_at_end() is False:
+            statements.append(self.declaration())
+        return statements

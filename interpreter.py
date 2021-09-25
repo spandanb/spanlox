@@ -1,8 +1,8 @@
 from numbers import Number
-from typing import Any
+from typing import Any, List
 
 from loxtoken import TokenType, Token
-from expression import Binary, Expr, Grouping, Literal, Unary
+from expression import Binary, Expr, Expression, Grouping, Literal, Print, Stmt, Unary
 from visitor import Visitor, HandlerNotFoundException
 
 
@@ -26,10 +26,10 @@ class Interpreter(Visitor):
     def __init__(self, error_reporter: 'ErrorReporter'):
         self.error_reporter = error_reporter
 
-    def interpret(self, expr: Expr):
+    def interpret(self, statements: List[Stmt]):
         try:
-            value = self.evaluate(expr)
-            print(self.stringify(value))
+            for statement in statements:
+                self.execute(statement)
         except LoxRuntimeError as e:
             self.error_reporter.runtime_error(e)
 
@@ -39,16 +39,11 @@ class Interpreter(Visitor):
         """
         return expr.accept(self)
 
-    @staticmethod
-    def stringify(obj) -> str:
-        if obj is None:
-            return 'nil'
-        # NOTE: author uses double as the underlying type and thus needs
-        # to do string manipulation to display integer valued doubles as ints- i.e. truncating '.0';
-        # I'm relying on Python's handling of numeric types (integer and float),
-        # and so don't explicitly handle the type as a float, and hence don't
-        # need to do string manipulation
-        return str(obj)
+    def execute(self, stmt: Stmt):
+        """
+        Execute stmt
+        """
+        return stmt.accept(self)
 
     def visit_literal(self, expr: Literal) -> Any:
         return expr.value
@@ -63,7 +58,7 @@ class Interpreter(Visitor):
             return self.is_truthy(right)
         elif expr.operator == TokenType.MINUS:
             self.check_number_operand(expr.operator, right)
-            return -1 * float(right);
+            return -1 * float(right)
 
         return None
 
@@ -105,6 +100,26 @@ class Interpreter(Visitor):
 
         # unreachable
         return None
+
+    def visit_expression(self, stmt: Expression) -> None:
+        self.evaluate(stmt.expression)
+        return None
+
+    def visit_print(self, stmt: Print) -> None:
+        value = self.evaluate(stmt.expression)
+        print(self.stringify(value))
+        return None
+
+    @staticmethod
+    def stringify(obj) -> str:
+        if obj is None:
+            return 'nil'
+        # NOTE: author uses double as the underlying type and thus needs
+        # to do string manipulation to display integer valued doubles as ints- i.e. truncating '.0';
+        # I'm relying on Python's handling of numeric types (integer and float),
+        # and so don't explicitly handle the type as a float, and hence don't
+        # need to do string manipulation
+        return str(obj)
 
     @staticmethod
     def is_truthy(obj) -> bool:

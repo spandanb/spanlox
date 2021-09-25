@@ -1,35 +1,63 @@
 from __future__ import annotations
 """
-Scanner token definitions 
+Scanner token definitions
 """
 
-import enum
+from enum import Enum, auto
 from typing import Any
 
 
-TokenType = enum.Enum(
-    'Tokens',
+class TokenType(Enum):
 
     # single char tokens
-    ['LEFT_PAREN', 'RIGHT_PAREN', 'LEFT_BRACE', 'RIGHT_BRACE',
-     'COMMA', 'DOT', 'MINUS', 'PLUS', 'SEMICOLON', 'SLASH', 'STAR',
+    LEFT_PAREN = auto()
+    RIGHT_PAREN = auto()
+    LEFT_BRACE = auto()
+    RIGHT_BRACE = auto()
 
-     # one or two char tokens
-     'BANG', 'BANG_EQUAL',
-     'EQUAL', 'EQUAL_EQUAL',
-     'GREATER', 'GREATER_EQUAL',
-     'LESS', 'LESS_EQUAL',
+    COMMA = auto()
+    DOT = auto()
+    MINUS = auto()
+    PLUS = auto()
+    SEMICOLON = auto()
+    SLASH = auto()
+    STAR = auto()
 
-     # Literals.
-     'IDENTIFIER', 'STRING', 'NUMBER',
+    # one or two char tokens
+    BANG = auto()
+    BANG_EQUAL = auto()
+    EQUAL = auto()
+    EQUAL_EQUAL = auto()
+    GREATER = auto()
+    GREATER_EQUAL = auto()
+    LESS = auto()
+    LESS_EQUAL = auto()
 
-     # Keywords.
-     'AND', 'CLASS', 'ELSE', 'FALSE', 'FUN', 'FOR', 'IF', 'NIL', 'OR',
-     'PRINT', 'RETURN', 'SUPER', 'THIS', 'TRUE', 'VAR', 'WHILE',
+    # Literals.
+    IDENTIFIER = auto()
+    STRING = auto()
+    NUMBER = auto()
 
-     'EOF'
-     ]
-)
+    # Keywords.
+    AND = auto()
+    CLASS = auto()
+    ELSE = auto()
+    FALSE = auto()
+    FUN = auto()
+    FOR = auto()
+    IF = auto()
+    NIL = auto()
+    OR = auto()
+
+    PRINT = auto()
+    RETURN = auto()
+    SUPER = auto()
+    THIS = auto()
+    TRUE = auto()
+    VAR = auto()
+    WHILE = auto()
+    EOF = auto()
+
 
 KEYWORDS = {
     "and": TokenType.AND,

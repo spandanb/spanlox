@@ -34,16 +34,17 @@ class Lox:
         """
         scanner = Scanner(source, self.error_reporter)
         tokens = scanner.scan_tokens()
-        for token in tokens:
-            print(token)
+        # print tokens
+        # for token in tokens:
+        #    print(token)
         parser = Parser(tokens, self.error_reporter)
-        expression = parser.parse()
+        statements = parser.parse()
         if self.error_reporter.had_error:
             # there was error; lazily exit
             return
 
         # print(AstPrinter().print(expression))
-        self.interpreter.interpret(expression)
+        self.interpreter.interpret(statements)
 
     def run_prompt(self):
         """
